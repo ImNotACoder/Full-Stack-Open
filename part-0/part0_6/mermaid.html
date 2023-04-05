@@ -1,0 +1,16 @@
+
+sequenceDiagram
+    participant user
+    participant browser
+    participant server
+
+    user->>browser: requests for page to load upon clicking link
+    activate browser
+
+    Note right of browser: Uses JS script fetched from server earlier
+    Note right of browser: JS script adds user text as note onto current note on screen
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    activate server
+
+    Note right of browser: sends json string of user text
