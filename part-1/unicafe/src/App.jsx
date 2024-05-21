@@ -29,24 +29,30 @@ const History = (props) => {
 
 const StatisticLine = (props) => {
   return (
-    <p>{props.text} {props.value}</p>
-  )
-}
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
+  );
+};
 
 const Statistics = (props) => {
-  let total = props.good + props.bad + props.neutral
-  let net = props.good - props.bad
+  let total = props.good + props.bad + props.neutral;
+  let net = props.good - props.bad;
+
   return (
-    <div>
-      <StatisticLine text="good" value={props.good} />
-      <StatisticLine text="neutral" value={props.neutral} />
-      <StatisticLine text="bad" value={props.bad} />
-      <StatisticLine text="all" value={total} />
-      <StatisticLine text="average" value={net / total} />
-      <StatisticLine text="positive" value={`${(props.good / total) * 100} %`} />
-    </div>
-  )
-}
+    <table>
+      <tbody>
+        <StatisticLine text="good" value={props.good} />
+        <StatisticLine text="neutral" value={props.neutral} />
+        <StatisticLine text="bad" value={props.bad} />
+        <StatisticLine text="all" value={total} />
+        <StatisticLine text="average" value={net / total} />
+        <StatisticLine text="positive" value={`${(props.good / total) * 100} %`} />
+      </tbody>
+    </table>
+  );
+};
 
 const App = () => {
   const [good, setGood] = useState(0)
