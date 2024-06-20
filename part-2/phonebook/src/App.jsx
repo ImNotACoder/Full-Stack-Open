@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import {Filter, Form, Persons} from './components/Component.jsx'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -8,7 +9,6 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
 
-  // const namesToShow = showAll
 
   const handleNameChange = (event) => {
     console.log(event.target.value)
@@ -49,42 +49,32 @@ const App = () => {
                       : persons
 
 
+
+  const fields = [
+    {
+      label: "name",
+      value: newName,
+      handleChange: handleNameChange,
+    },
+    {
+      label: "number",
+      value: newNumber,
+      handleChange: handleNumberChange,
+    }
+  ]
+
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with 
-        <input 
-        value={filter}
-        onChange={handleFilterChange}
-        />
-      </div>
+      <Filter value={filter}
+              onChange={handleFilterChange}
+              label="filter shown with "
+      />
       <h2> Add a new </h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input 
-          value={newName}
-          onChange={handleNameChange}
-          />
-        </div>
-        <div>
-          number: <input
-          value={newNumber}
-          onChange={handleNumberChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Form fields={fields} addName={addName}/>
       <h2>Numbers</h2>
-      <ul>
-        {
-          personsToShow.map(person =>
-            <li key={person.id}>{person.name} {person.number}</li>
-          )
-        }
-      </ul>
+      <Persons personsToShow={personsToShow}/>
     </div>
   )
 }
