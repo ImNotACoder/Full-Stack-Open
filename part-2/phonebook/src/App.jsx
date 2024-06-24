@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import {Filter, Form, Persons} from './components/Component.jsx'
+import phonebookService from './services/phonebookrecords.js'
 
 const App = () => {
-
 
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
@@ -23,13 +23,19 @@ const App = () => {
 
   useEffect(hook, [])
 
+  useEffect(() => {
+    phonebookService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+  }, [])
+
   const handleNameChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
@@ -53,13 +59,21 @@ const App = () => {
       id: persons.length+1,
     }
 
-    axios
-      .post('http://localhost:3001/persons', personRecord)
-      .then(response => {
+    phonebookService
+      .create(personRecord)
+      .then(returnedPerson => {
         setPersons(persons.concat(personRecord))
         setNewName('')
         setNewNumber('')
       })
+
+    // axios
+    //   .post('http://localhost:3001/persons', personRecord)
+    //   .then(response => {
+    //     setPersons(persons.concat(personRecord))
+    //     setNewName('')
+    //     setNewNumber('')
+    //   })
 
   }
 
