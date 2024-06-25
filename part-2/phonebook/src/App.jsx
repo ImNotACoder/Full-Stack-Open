@@ -11,17 +11,17 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
 
-  const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
-  }
+  // const hook = () => {
+  //   console.log('effect')
+  //   axios
+  //     .get('http://localhost:3001/persons')
+  //     .then(response => {
+  //       console.log('promise fulfilled')
+  //       setPersons(response.data)
+  //     })
+  // }
 
-  useEffect(hook, [])
+  // useEffect(hook, [])
 
   useEffect(() => {
     phonebookService
@@ -46,42 +46,63 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault()
-
-    const exists = persons.some(person => person.name === newName)
-    if (exists) {
-      alert(newName + " is already added to phonebook")
-      return
+  
+    const existingPerson = persons.find(person => person.name === newName)
+  
+    if (existingPerson) {
+      const confirmUpdate = window.confirm(
+        `${existingPerson.name} is already added to phonebook, replace the old number with a new one?`
+      )
+  
+      if (confirmUpdate) {
+        const updatedPerson = { ...existingPerson, number: newNumber }
+  
+        phonebookService
+          .update(existingPerson.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+          })
+          .catch(error => {
+            alert(`The person '${existingPerson.name}' was already deleted from server`)
+            setPersons(persons.filter(person => person.id !== existingPerson.id))
+          })
+      }
+    } else {
+      const personRecord = {
+        name: newName,
+        number: newNumber,
+        id: persons.length + 1,
+      }
+  
+      phonebookService
+        .create(personRecord)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
     }
-    
-    const personRecord = {
-      name: newName,
-      number: newNumber,
-      id: persons.length+1,
+  }
+  
+
+  const removeEntry = id => {
+    const url = `http://localhost:3001/persons/${id}`
+    const entry = persons.find(n => n.id === id)
+
+    if(window.confirm(`Delete ${entry.name} ?`)){
+      phonebookService
+        .remove(id)
+          .then(() => {
+            setPersons(persons.filter(person => person.id !== id))
+          })
     }
-
-    phonebookService
-      .create(personRecord)
-      .then(returnedPerson => {
-        setPersons(persons.concat(personRecord))
-        setNewName('')
-        setNewNumber('')
-      })
-
-    // axios
-    //   .post('http://localhost:3001/persons', personRecord)
-    //   .then(response => {
-    //     setPersons(persons.concat(personRecord))
-    //     setNewName('')
-    //     setNewNumber('')
-    //   })
-
   }
 
   const personsToShow = filter 
                       ? persons.filter(person =>person.name.toLowerCase().includes(filter.toLowerCase()))
                       : persons
-
-
 
   const fields = [
     {
@@ -96,7 +117,6 @@ const App = () => {
     }
   ]
 
-
   return (
     <div>
       <h2>Phonebook</h2>
@@ -107,7 +127,8 @@ const App = () => {
       <h2> Add a new </h2>
       <Form fields={fields} addName={addName}/>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} 
+      deleteField={removeEntry}/>
     </div>
   )
 }

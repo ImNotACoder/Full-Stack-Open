@@ -24,10 +24,10 @@ const FormComponent = ({label, newItem, handle}) => {
     );
 }
 
-const Button = ({label, type}) => {
+const Button = ({label, type, onClick}) => {
     return (
         <div>
-            <button type={type}>{label}</button>
+            <button type={type} onClick={onClick}>{label}</button>
         </div>
     )
 }
@@ -50,15 +50,34 @@ const Form = ({addName, fields}) => {
     );
 }
 
-const Persons = ({personsToShow}) => {
+const Persons = ({personsToShow, deleteField}) => {
     return (
         <ul>
             {
             personsToShow.map(person => 
-                <li key={person.id}>{person.name}  {person.number} </li>
+                <Person
+                key={person.id}
+                property={person}
+                deleteField={deleteField}
+                />
             )
             }
         </ul>
+    )
+}
+
+const Person = ({property, deleteField}) => {
+    return (
+        <div>
+            <li>
+                {property.name}  {property.number} 
+                <Button 
+                    type="submit"
+                    label="delete"
+                    onClick={() => deleteField(property.id)}
+                />
+            </li>
+        </div>
     )
 }
 
