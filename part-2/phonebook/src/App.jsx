@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import {Filter, Form, Persons} from './components/Component.jsx'
 import phonebookService from './services/phonebookrecords.js'
 
