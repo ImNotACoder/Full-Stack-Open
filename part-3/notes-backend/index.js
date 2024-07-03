@@ -1,12 +1,25 @@
 const express = require('express')
 const http = require('http') // same as 'import http from 'http' '
 const cors = require('cors')
+const mongoose = require('mongoose')
+
+
+const passworrd = process.agv[2]
 
 const app = express()
 app.use(express.json())
 app.use(cors())
-
 app.use(express.static('dist'))
+
+const url = process.env.MONGODB_URL;
+
+mongoose.set('strictQuery', false)
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+  content: String, 
+  impotant: Boolean,
+})
 
 let notes = [
   {
